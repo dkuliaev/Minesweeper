@@ -1,9 +1,10 @@
 
 
 import de.bezier.guido.*;
-//Declare and initialize NUM_ROWS and NUM_COLS = 20
+private int NUM_ROWS = 20;
+private int NUM_COLS = 20;
 private MSButton[][] buttons; //2d array of minesweeper buttons
-private ArrayList <MSButton> bombs; //ArrayList of just the minesweeper buttons that are mined
+private ArrayList <MSButton> bombs = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 
 void setup ()
 {
@@ -11,16 +12,30 @@ void setup ()
     textAlign(CENTER,CENTER);
     
     // make the manager
-    Interactive.make( this );
+    Interactive.make(this);
     
-    
+    buttons = new MSButton[NUM_ROWS][NUM_COLS];
+    for(int rows = 0; rows < NUM_ROWS; rows++)
+    {
+        for(int columns = 0; columns < NUM_COLS; columns++)
+        {
+            buttons[rows][columns] = new MSButton(rows, columns);
+        }
+    }
 
-    //declare and initialize buttons
     setBombs();
-}
+
+    }
 public void setBombs()
 {
-    //your code
+    int bombRow = (int)(Math.random() * 20);
+    int bombColumn = (int)(Math.random() * 20);
+
+    System.out.println(bombRow);
+    System.out.println(bombColumn);
+
+    if(!bombs.contains(buttons[bombRow][bombColumn]))
+        bombs.add(buttons[bombRow][bombColumn]);
 }
 
 public void draw ()
@@ -49,11 +64,11 @@ public class MSButton
     private float x,y, width, height;
     private boolean clicked, marked;
     private String label;
-    
+
     public MSButton ( int rr, int cc )
     {
-        // width = 400/NUM_COLS;
-        // height = 400/NUM_ROWS;
+        width = 400/NUM_COLS;
+        height = 400/NUM_ROWS;
         r = rr;
         c = cc; 
         x = c*width;
@@ -75,15 +90,19 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
-        //your code here
+        if(keyPressed == true)
+            clicked = false;
+        else 
+            clicked = true;
+        
     }
 
     public void draw () 
     {    
         if (marked)
             fill(0);
-        // else if( clicked && bombs.contains(this) ) 
-        //     fill(255,0,0);
+        else if( clicked && bombs.contains(this) ) 
+            fill(255,0,0);
         else if(clicked)
             fill( 200 );
         else 
@@ -92,21 +111,57 @@ public class MSButton
         rect(x, y, width, height);
         fill(0);
         text(label,x+width/2,y+height/2);
+
     }
     public void setLabel(String newLabel)
     {
         label = newLabel;
     }
-    public boolean isValid(int r, int c)
+    public boolean isValid(int row, int col)
     {
-        //your code here
+        if(row <= NUM_ROWS && col <= NUM_COLS)
+            return true;
         return false;
     }
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
-        //your code here
-        return numBombs;
+
+        if(buttons[r-1][c-1].isValid(r, c) == true && bombs.contains(buttons[r-1][c-1]))
+        {
+            numBombs++;
+        }
+        if(buttons[r-1][c].isValid(r, c) == true && bombs.contains(buttons[r-1][c]))
+        {
+            numBombs++;
+        }
+        if(buttons[r-1][c+1].isValid(r, c) == true && bombs.contains(buttons[r-1][c+1]))
+        {
+            numBombs++;
+        }
+        if(buttons[r][c-1].isValid(r, c) == true && bombs.contains(buttons[r][c-1]))
+        {
+            numBombs++;
+        }
+        if(buttons[r][c+1].isValid(r, c) == true && bombs.contains(buttons[r][c+1]))
+        {
+            numBombs++;
+        }
+        if(buttons[r+1][c-1].isValid(r, c) == true && bombs.contains(buttons[r+1][c-1]))
+        {
+            numBombs++;
+        }
+        if(buttons[r+1][c].isValid(r, c) == true && bombs.contains(buttons[r+1][c]))
+        {
+            numBombs++;
+        }
+        if(buttons[r+1][c+1].isValid(r, c) == true && bombs.contains(buttons[r+1][c+1]))
+        {
+            numBombs++;
+        }
+
+        return numBombs; 
+
     }
 }
 
